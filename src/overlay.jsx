@@ -44,6 +44,13 @@ function Overlay() {
   return (
     <main className="overlay-root">
       {/* Mic notch / prompt UI will live here. */}
+      <div
+        className="flex items-center gap-2 rounded-full border border-gray-700 bg-black px-4 py-2"
+        id="mic-notch"
+      >
+        <div className="h-2 w-2 rounded-full bg-red-500" />
+        <p className="text-sm text-white">- - - - - - - - - -</p>
+      </div>
     </main>
   );
 }

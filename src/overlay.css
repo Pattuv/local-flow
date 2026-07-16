@@ -43,4 +43,13 @@ body {
   user-select: none;
   app-region: no-drag;
   -webkit-app-region: no-drag;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 28px;
+  box-sizing: border-box;
+}
+
+#mic-notch {
+  pointer-events: none;
 }
