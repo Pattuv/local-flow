@@ -32,7 +32,7 @@ function App() {
       >
         <p className="text-3xl font-medium tracking-tight">Welcome, Pratyush</p>
         <p className="text-gray-500 mt-3">Press control + ⌥ to speak into any textbox.</p>
-        <textarea className="w-full max-w-[370px] h-30  mt-6 p-4 text-sm border border-gray-200 bg-gray-50 rounded-2xl placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-300/50 ease-in-out duration-300 resize-none" placeholder="Try it out here!" />
+        <textarea className="w-full max-w-[370px] h-20  mt-6 p-4 text-sm border border-gray-200 bg-gray-50 rounded-2xl placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-300/50 ease-in-out duration-300 resize-none" placeholder="Try it out here!" />
       </div>
     </main>
   );
