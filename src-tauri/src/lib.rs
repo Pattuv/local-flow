@@ -34,6 +34,20 @@ fn configure_macos_dashboard(window: &tauri::WebviewWindow) {
 }
 
 #[cfg(target_os = "macos")]
+fn apply_overlay_click_through(window: &tauri::WebviewWindow) {
+    use objc2_app_kit::NSWindow;
+
+    let _ = window.set_ignore_cursor_events(true);
+
+    if let Ok(ns_window_ptr) = window.ns_window() {
+        // SAFETY: ns_window pointer comes from Tauri's AppKit window handle.
+        let ns_window = unsafe { &*(ns_window_ptr as *const NSWindow) };
+        // Belt-and-suspenders: Tauri API + native AppKit flag.
+        ns_window.setIgnoresMouseEvents(true);
+    }
+}
+
+#[cfg(target_os = "macos")]
 fn configure_macos_overlay(window: &tauri::WebviewWindow) {
     use objc2_app_kit::{NSColor, NSWindow};
     use tauri::{PhysicalPosition, PhysicalSize};
@@ -57,9 +71,7 @@ fn configure_macos_overlay(window: &tauri::WebviewWindow) {
 
     let _ = window.set_resizable(false);
     let _ = window.set_skip_taskbar(true);
-    // Full click-through: clicks pass to apps underneath.
-    let _ = window.set_ignore_cursor_events(true);
-    // Keep inspector closed if anything tries to open it.
+    apply_overlay_click_through(window);
     window.close_devtools();
 }
 
@@ -76,10 +88,23 @@ pub fn run() {
                 }
             }
             #[cfg(target_os = "macos")]
+            WindowEvent::Resized(_) | WindowEvent::Moved(_) | WindowEvent::ScaleFactorChanged { .. } => {
+                // macOS can reset ignoresMouseEvents after geometry changes.
+                if window.label() == "overlay" {
+                    if let Some(overlay) = window.app_handle().get_webview_window("overlay") {
+                        apply_overlay_click_through(&overlay);
+                    }
+                }
+            }
+            #[cfg(target_os = "macos")]
             WindowEvent::Focused(_) => {
                 if window.label() == "main" {
                     if let Some(webview) = window.app_handle().get_webview_window("main") {
                         configure_macos_dashboard(&webview);
+                    }
+                    // Re-assert click-through so the overlay never eats dashboard drags.
+                    if let Some(overlay) = window.app_handle().get_webview_window("overlay") {
+                        apply_overlay_click_through(&overlay);
                     }
                 }
             }
@@ -88,11 +113,13 @@ pub fn run() {
         .setup(|app| {
             #[cfg(target_os = "macos")]
             {
-                if let Some(window) = app.get_webview_window("main") {
-                    configure_macos_dashboard(&window);
-                }
                 if let Some(window) = app.get_webview_window("overlay") {
                     configure_macos_overlay(&window);
+                }
+                if let Some(window) = app.get_webview_window("main") {
+                    configure_macos_dashboard(&window);
+                    // Dashboard must stay usable above the click-through overlay.
+                    let _ = window.set_focus();
                 }
             }
             Ok(())

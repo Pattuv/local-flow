@@ -5,7 +5,6 @@
   "windows": ["overlay"],
   "permissions": [
     "core:default",
-    "core:window:deny-start-dragging",
     "core:webview:deny-internal-toggle-devtools"
   ]
 }
