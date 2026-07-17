@@ -27,6 +27,7 @@
   body,
   #root {
     height: 100%;
+    box-sizing: border-box;
   }
 
   body {
@@ -35,10 +36,29 @@
     font-family: "Host Grotesk", system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    border: 1px solid rgba(0, 0, 0, 0.14);
   }
 
   [data-tauri-drag-region] {
     app-region: drag;
     -webkit-app-region: drag;
+  }
+
+  button,
+  input,
+  textarea,
+  select,
+  a {
+    app-region: no-drag;
+    -webkit-app-region: no-drag;
+  }
+
+  textarea {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  textarea::-webkit-scrollbar {
+    display: none;
   }
 }

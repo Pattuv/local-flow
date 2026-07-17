@@ -1,4 +1,18 @@
+#[cfg(target_os = "macos")]
+mod hotkey;
+#[cfg(target_os = "macos")]
+mod mic_sound;
+
+use serde::Deserialize;
 use tauri::{Manager, WindowEvent};
+
+#[derive(Clone, Copy, Deserialize)]
+pub struct TapErrorBounds {
+    x: f64,
+    y: f64,
+    width: f64,
+    height: f64,
+}
 
 #[cfg(target_os = "macos")]
 use tauri_nspanel::{
@@ -136,6 +150,20 @@ fn configure_macos_overlay(window: &tauri::WebviewWindow) -> tauri::Result<()> {
     Ok(())
 }
 
+#[tauri::command]
+fn set_tap_error_click_dismiss_watch(
+    watching: bool,
+    bounds: Option<TapErrorBounds>,
+) -> Result<(), ()> {
+    #[cfg(target_os = "macos")]
+    hotkey::set_tap_error_click_dismiss_watch(watching, bounds);
+
+    #[cfg(not(target_os = "macos"))]
+    let _ = (watching, bounds);
+
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let mut builder = tauri::Builder::default().plugin(tauri_plugin_opener::init());
@@ -146,6 +174,7 @@ pub fn run() {
     }
 
     builder
+        .invoke_handler(tauri::generate_handler![set_tap_error_click_dismiss_watch])
         .on_window_event(|window, event| match event {
             WindowEvent::CloseRequested { api, .. } => {
                 if window.label() == "main" {
@@ -186,6 +215,7 @@ pub fn run() {
                     configure_macos_dashboard(&window);
                     let _ = window.set_focus();
                 }
+                hotkey::start(app.handle().clone());
             }
             Ok(())
         })
