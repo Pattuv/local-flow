@@ -2,7 +2,7 @@
 
 @font-face {
   font-family: "Host Grotesk";
-  src: url("./assets/Fonts/HostGrotesk-VariableFont_wght.ttf")
+  src: url("../assets/Fonts/HostGrotesk-VariableFont_wght.ttf")
     format("truetype");
   font-weight: 100 900;
   font-style: normal;
@@ -11,7 +11,7 @@
 
 @font-face {
   font-family: "Host Grotesk";
-  src: url("./assets/Fonts/HostGrotesk-Italic-VariableFont_wght.ttf")
+  src: url("../assets/Fonts/HostGrotesk-Italic-VariableFont_wght.ttf")
     format("truetype");
   font-weight: 100 900;
   font-style: italic;
@@ -54,11 +54,37 @@ body {
 
 .mic-notch {
   pointer-events: none;
+  width: fit-content;
+  min-height: 10px;
+  padding: 10px 22px;
   opacity: 0;
   transform: translateY(-10px) scale(0.96);
   transition:
     opacity 140ms ease,
     transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mic-waveform {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 20px;
+}
+
+.mic-waveform-bar {
+  width: 3px;
+  background: rgb(255 255 255);
+  will-change: height;
+}
+
+.mic-waveform--blocked {
+  color: rgb(248 113 113);
+}
+
+.mic-waveform-fallback-icon {
+  width: 16px;
+  height: 16px;
 }
 
 .mic-notch--visible {

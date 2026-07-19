@@ -1,7 +1,7 @@
 #[cfg(target_os = "macos")]
 mod hotkey;
 #[cfg(target_os = "macos")]
-mod mic_sound;
+mod sound;
 
 use serde::Deserialize;
 use tauri::{Manager, WindowEvent};
@@ -151,6 +151,14 @@ fn configure_macos_overlay(window: &tauri::WebviewWindow) -> tauri::Result<()> {
 }
 
 #[tauri::command]
+fn play_error_sound() -> Result<(), ()> {
+    #[cfg(target_os = "macos")]
+    sound::play_error();
+
+    Ok(())
+}
+
+#[tauri::command]
 fn set_tap_error_click_dismiss_watch(
     watching: bool,
     bounds: Option<TapErrorBounds>,
@@ -174,7 +182,10 @@ pub fn run() {
     }
 
     builder
-        .invoke_handler(tauri::generate_handler![set_tap_error_click_dismiss_watch])
+        .invoke_handler(tauri::generate_handler![
+            set_tap_error_click_dismiss_watch,
+            play_error_sound
+        ])
         .on_window_event(|window, event| match event {
             WindowEvent::CloseRequested { api, .. } => {
                 if window.label() == "main" {

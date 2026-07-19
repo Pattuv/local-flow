@@ -4,7 +4,7 @@ use std::time::Instant;
 
 use tauri::{AppHandle, Emitter};
 
-use crate::mic_sound;
+use crate::sound;
 use crate::TapErrorBounds;
 
 static DICTATION_ACTIVE: AtomicBool = AtomicBool::new(false);
@@ -56,7 +56,7 @@ fn emit_dictation_state(app: &AppHandle, active: bool) {
     let too_short = held_ms < MIN_HOLD_MS;
 
     if !too_short {
-        mic_sound::play();
+        sound::play_mic();
     }
 
     let _ = app.emit(
@@ -66,7 +66,7 @@ fn emit_dictation_state(app: &AppHandle, active: bool) {
 }
 
 pub fn start(app: AppHandle) {
-    mic_sound::init();
+    sound::init();
 
     std::thread::spawn(move || {
         use core_foundation::runloop::CFRunLoop;

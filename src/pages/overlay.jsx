@@ -4,6 +4,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { Info, X } from "lucide-react";
+import MicWaveform from "../components/MicWaveform";
 import "./overlay.css";
 
 const TAP_ERROR_DISMISS_MS = 8000;
@@ -105,6 +106,7 @@ function Overlay() {
 
   const openTapError = React.useCallback(() => {
     setShowTapError(true);
+    invoke("play_error_sound").catch(() => {});
 
     if (dismissTimerRef.current) {
       clearTimeout(dismissTimerRef.current);
@@ -225,10 +227,10 @@ function Overlay() {
   return (
     <main className="overlay-root">
       <div
-        className={`mic-notch flex items-center gap-2 rounded-full border border-gray-700 bg-black p-2 px-4 ${dictationActive ? " mic-notch--visible" : ""}`}
+        className={`mic-notch flex items-center justify-center rounded-full border border-gray-700 bg-black${dictationActive ? " mic-notch--visible" : ""}`}
         id="mic-notch"
       >
-        <p className="text-sm text-white">- - - - - -</p>
+        {dictationActive ? <MicWaveform active={dictationActive} /> : null}
       </div>
 
       <div
